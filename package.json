@@ -1,0 +1,14 @@
+{
+  "name": "dekit-router",
+  "version": "0.1.0",
+  "description": "Port-less local preview URLs for dekit stacks: a machine-wide router that assigns port groups and serves <service>.<stack>.<product>.localhost",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": { "dekit-router": "src/main.ts" },
+  "scripts": {
+    "test": "bun test",
+    "build": "bun build --compile --minify src/main.ts --outfile dist/dekit-router",
+    "install:local": "bun run build && mkdir -p ~/.local/bin && cp dist/dekit-router ~/.local/bin/dekit-router"
+  },
+  "devDependencies": { "@types/bun": "latest" }
+}
