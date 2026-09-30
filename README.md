@@ -2,6 +2,10 @@
 
 Port-less local preview URLs for [dekit](https://dekit.run) stacks.
 
+> Day to day you don't run this directly. **[localdev](https://github.com/samifouad/localdev)**
+> is the one command (`localdev`, `localdev down`, …). It registers stacks with this router
+> and starts them with dekit. dekit-router is the plumbing underneath.
+
 Several people or agents run the same multi-service app on one machine, each
 from their own checkout. Each stack registers with one machine-wide router,
 which gives it:
