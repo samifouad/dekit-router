@@ -29,6 +29,40 @@ put the stack's name at the front of `state` (`<stack>~<random>`). The router
 sends the browser on to that stack's service for the path, as registered with
 `--relay`.
 
+### How the relay finds the right stack
+
+Take two stacks of the same product, `fix-kimi` and `other-codex`, both using
+the same dev GitHub app. Its single callback is
+`http://github.cqx.localhost/connect/callback`.
+
+1. **Leaving.** When a stack sends someone to GitHub, it makes a random
+   `state` and keeps a copy in a cookie on its own host, which is the usual
+   anti-forgery check. It puts its own name in front:
+   - `fix-kimi` sends `state=fix-kimi~a8Kx…`;
+   - `other-codex` sends `state=other-codex~Q2mz…`.
+2. **At GitHub.** Both come back to the same callback URL. GitHub always
+   returns `state` exactly as it was sent:
+   `…/connect/callback?installation_id=…&state=fix-kimi~a8Kx…`.
+3. **At the router.** It reads the part before `~`, finds the stack
+   registered under that name, and sends the browser on to that stack's
+   service for the path (`--relay /connect/callback=main` →
+   `http://fix-kimi.cqx.localhost/connect/callback?…`), with the query string
+   unchanged.
+4. **At the stack.** It checks as it always does: the full `state` must match
+   the cookie it set in step 1.
+
+The router only ever forwards to stacks registered on this machine, and the
+name in `state` grants nothing by itself. If someone put another stack's name
+there, that stack would find no matching cookie and refuse, exactly as it
+refuses any forged `state`. Two stacks can be mid-flow at the same moment:
+each carries its own name and random part.
+
+It works for any provider that returns `state` unchanged. For GitHub that
+covers both the GitHub App install (the Setup URL gets `state` back) and
+sign-in with GitHub (the OAuth callback does). On the app side it's one line:
+in local development, put the stack's name in front of the `state` you
+generate.
+
 ## Install
 
 ```sh
